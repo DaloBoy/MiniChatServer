@@ -10,17 +10,33 @@ namespace Client
 {
     class Client
     {
+        string line;
         public void Start()
         {
+            //anlægger Client-håndterende kode
             using(TcpClient client = new TcpClient("localhost", 7))
             using (NetworkStream ns = client.GetStream())
             using (StreamReader sr = new StreamReader(ns))
             using (StreamWriter sw = new StreamWriter(ns))
             {
-                string line = Console.ReadLine();
-                sw.WriteLine(line);
-                sw.Flush();
-                string myLine = sr.ReadLine();
+                //While-Loop. While True, do this
+                while (true)
+                {
+                    //Skriver til serveren
+                    Console.Write("Client: ");
+                    String cLine = Console.ReadLine();
+                    sw.WriteLine(cLine);
+                    sw.Flush();
+
+                    //Læs for at håndtere input fra server
+                    line = sr.ReadLine();
+                    if (cLine == "STOP" || line == "STOP")
+                    {
+                        break;
+                    }
+                    //Hvis condition er false print det ud
+                    Console.WriteLine(line);
+                }
             }
         }
     }

@@ -11,23 +11,43 @@ namespace MiniChatServer
 {
     class Server
     {
-        public void Start()
-        {
-            TcpListener server = new TcpListener(IPAddress.Loopback, 7);
-            server.Start();
+       String myLine;
+       //al kode som håndtere Client ligger i denne metode.
+       public void DoClient(TcpListener server)
+       {
+           using (TcpClient socket = server.AcceptTcpClient())
+           using (NetworkStream ns = socket.GetStream())
+           using (StreamReader sreader = new StreamReader(ns))
+           using (StreamWriter swriter = new StreamWriter(ns))
+           {
+            //While-Loop, checker om programmet skal stoppes eller ej.
+               while (true)
+               {
+                   //checker clients input
+                   String line = sreader.ReadLine();
+                   //If-statements - Hvis en linje = Stop. skal programmet stoppes
+                   if (line == "STOP" || myLine == "STOP")
+                   {
+                       break;
+                   }
+                   //Hvis ikke - fortsæt og print det ud
+                   Console.WriteLine(line);
+                    
+                   //Skriver til Client-siden
+                   Console.Write("Server: ");
+                   myLine = Console.ReadLine();
+                   swriter.WriteLine(myLine);
+                   swriter.Flush();
+               }
+           }
+       }
 
-            using (TcpClient client = server.AcceptTcpClient())
-            using (NetworkStream ns = client.GetStream())
-            using (StreamReader sr = new StreamReader(ns))
-            using (StreamWriter sw = new StreamWriter(ns))
-            {
-                
-                string line = sr.ReadLine();
-                string myLine = Console.ReadLine();
-                sw.WriteLine(myLine);
-                sw.Flush();
-
-            }
-        }
+       //starter server op. Og køre DoClient metode    
+       public void Start()
+       {
+           TcpListener Server = new TcpListener(IPAddress.Loopback, 7070);
+           Server.Start();
+           DoClient(Server);
+       }        
     }
 }

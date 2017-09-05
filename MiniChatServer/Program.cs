@@ -14,7 +14,7 @@ namespace MiniChatServer
             Server server = new Server();
             server.Start();
 
-            Console.ReadLine();
+            
         }
     }
 }
